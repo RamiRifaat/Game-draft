@@ -2,41 +2,48 @@ let myCanvas = document.getElementById("my-canvas");
 let ctx = myCanvas.getContext("2d");
 let keydownOutput = document.getElementById("keydown-output");
 let keyupOutput = document.getElementById("keyup-output");
-let keydownOutput2 = document.getElementById("keydown-output2");
-let keyupOutput2 = document.getElementById("keyup-output2");
-let playerX = 250;
-let playerY = 250;
+let player1param = document.getElementById("player1-param");
+let player2param = document.getElementById("player2-param");
+let player1X = 250;
+let player1Y = 250;
 let player2X = 250;
 let player2Y = 250;
-let playerSpeed = 2;
+let player1Speed = 2;
 let player2Speed = 2;
-let playerXDir = 0;
-let playerYDir = 0;
+let player1XDir = 0;
+let player1YDir = 0;
 let player2XDir = 0;
 let player2YDir = 0;
-
+const PLAYER_WIDTH = 100;
+const PLAYER_HEIGHT = 20;
+const ARENA_HEIGHT = 500;
+const ARENA_WIDTH = 500;
 
 function drawPlayer1() {
-    ctx.fillRect(playerX, playerY, 100, 20)
+    ctx.fillRect(player1X, player1Y, PLAYER_WIDTH, PLAYER_HEIGHT)
 }
 
 function drawPlayer2() {
-    ctx.fillRect(player2X, player2Y, 100, 20)
+    ctx.fillRect(player2X, player2Y, PLAYER_WIDTH, PLAYER_HEIGHT)
 }
 
 function movePlayer() {
-    playerX += playerSpeed * playerXDir;
-    playerY += playerSpeed * playerYDir;
-    if (playerX < 0) {
-        playerX = 0;
-    } else if (playerX > 400) {
-        playerX = 400;
+    player1param.innerHTML = "movePlayer:" + player1X + " " + player1Y + " " + player1XDir + " " + player1YDir;
+    player1X += player1Speed * player1XDir;
+    player1Y += player1Speed * player1YDir;
+    if (player1X < 0) {
+        player1X = 0;
+    } else if (player1X > ARENA_WIDTH - PLAYER_WIDTH) {
+        player1X = ARENA_WIDTH - PLAYER_WIDTH;
     }
-    if (playerY < 0) {
-        playerY = 0;
+    if (player1Y < 0) {
+        player1Y = 0;
+    } else if (player1Y > ARENA_HEIGHT - PLAYER_HEIGHT) {
+        player1Y = ARENA_HEIGHT - PLAYER_HEIGHT;
     }
-}
 
+}
+/*
 function drawTriangle() {
 
     ctx.beginPath();
@@ -57,99 +64,121 @@ function drawTriangle2() {
 
 }
 
-
+*/
 
 function movePlayer2() {
+    player2param.innerHTML = "movePlayer2:" + player2X + " " + player2Y + " " + player2XDir + " " + player2YDir;
     player2X += player2Speed * player2XDir;
     player2Y += player2Speed * player2YDir;
     if (player2X < 0) {
         player2X = 0;
-    } else if (player2X > 400) {
-        player2X = 400;
+    } else if (player2X > ARENA_WIDTH - PLAYER_WIDTH) {
+        player2X = ARENA_WIDTH - PLAYER_WIDTH;
     }
+
     if (player2Y < 0) {
         player2Y = 0;
+    } else if (player2Y > ARENA_HEIGHT - PLAYER_HEIGHT) {
+        player2Y = ARENA_HEIGHT - PLAYER_HEIGHT;
     }
 }
+const PLAYER1_LEFT = 37;
+const PLAYER1_RIGHT = 39;
+const PLAYER1_UP = 38;
+const PLAYER1_DOWN = 40;
+
+const PLAYER2_LEFT = 65;
+const PLAYER2_RIGHT = 68;
+const PLAYER2_UP = 87;
+const PLAYER2_DOWN = 83;
 
 function keyPressed(event) {
     let key = event.keyCode;
-    keydownOutput.innerHTML = "Key down code:" + key;
-    if (key === 37) {
-        playerXDir = -1;
+    if (key === PLAYER1_LEFT) {
+        player1XDir = -1;
 
-    } else if (key === 39) {
-        playerXDir = +1;
     }
-    if (key === 40) {
-        playerYDir = +1;
+    if (key === PLAYER1_RIGHT) {
+        player1XDir = +1;
     }
-    if (key === 38) {
-        playerYDir = -1;
+    if (key === PLAYER1_DOWN) {
+        player1YDir = +1;
     }
+    if (key === PLAYER1_UP) {
+        player1YDir = -1;
+    }
+    if (key === PLAYER2_LEFT) {
+        player2XDir = -1;
+
+    }
+    if (key === PLAYER2_RIGHT) {
+        player2XDir = +1;
+    }
+    if (key === PLAYER2_DOWN) {
+        player2YDir = +1;
+    }
+    if (key === PLAYER2_UP) {
+        player2YDir = -1;
+    }
+    keydownOutput.innerHTML = "Key down code:" + key + " " + player1XDir + " " + player1YDir + " " + player2XDir + " " + player2YDir;
 }
 
 function keyReleased(event) {
     let key = event.keyCode;
-    keyupOutput.innerHTML = "Key up code:" + key;
-    if (key === 37) {
-        playerXDir = 0;
+    if (key === PLAYER1_LEFT) {
+        player1XDir = 0;
     }
-    if (key === 39) {
-        playerXDir = 0;
+    if (key === PLAYER1_RIGHT) {
+        player1XDir = 0;
     }
-    if (key === 38) {
-        playerYDir = 0;
+    if (key === PLAYER1_UP) {
+        player1YDir = 0;
     }
-    if (key === 40) {
-        playerYDir = 0;
+    if (key === PLAYER1_DOWN) {
+        player1YDir = 0;
     }
-}
-
-function keyPressed2(event) {
-    let key2 = event.keyCode;
-    keydownOutput2.innerHTML = "Key down code:" + key2;
-    if (key2 === 65) {
-        player2XDir = -1;
-
-    } else if (key2 === 68) {
-        player2XDir = +1;
-    }
-    if (key2 === 83) {
-        player2YDir = +1;
-    }
-    if (key2 === 87) {
-        player2YDir = -1;
-    }
-}
-
-function keyReleased2(event) {
-    let key2 = event.keyCode;
-    keyupOutput2.innerHTML = "Key up code:" + key2;
-    if (key2 === 65) {
+    if (key === PLAYER2_LEFT) {
         player2XDir = 0;
     }
-    if (key2 === 68) {
+    if (key === PLAYER2_RIGHT) {
         player2XDir = 0;
     }
-    if (key2 === 83) {
+    if (key === PLAYER2_DOWN) {
         player2YDir = 0;
     }
-    if (key2 === 87) {
+    if (key === PLAYER2_UP) {
         player2YDir = 0;
     }
+    keyupOutput.innerHTML = "Key up code:" + key + " " + player1XDir + " " + player1YDir + " " + player2XDir + " " + player2YDir;
+}
+
+function checkImpact() {
+    if ((player2X < player1X + PLAYER_WIDTH) &&
+        (player2X + PLAYER_WIDTH > player1X) &&
+        (player2Y < player1Y + PLAYER_HEIGHT) &&
+        (player2Y + PLAYER_HEIGHT > player1Y)) {
+        if (player1Y < player2Y) {
+            player2Y = ARENA_HEIGHT - PLAYER_HEIGHT;
+        } else {
+            player1Y = ARENA_HEIGHT - PLAYER_HEIGHT;
+        }
+    }
+
 }
 
 function refreshUI() {
     ctx.clearRect(0, 0, 500, 500);
 
-    movePlayer();
+
     drawPlayer1();
     drawPlayer2();
-    drawTriangle();
-    drawTriangle2();
+    // drawTriangle();
+    // drawTriangle2();
     movePlayer();
     movePlayer2();
+
+    checkImpact();
+
 }
 
 
