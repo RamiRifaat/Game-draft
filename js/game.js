@@ -4,8 +4,11 @@ let keydownOutput = document.getElementById("keydown-output");
 let keyupOutput = document.getElementById("keyup-output");
 let player1param = document.getElementById("player1-param");
 let player2param = document.getElementById("player2-param");
+let impactOutput = document.getElementById("impactOutput");
 const GRAVITY = 1;
 const UP_VELOCITY = -10;
+const TERMINAL_VELOCITY = 20;
+
 const PLAYER_WIDTH = 30;
 const PLAYER_HEIGHT = 30;
 const ARENA_HEIGHT = 500;
@@ -57,10 +60,10 @@ function drawPlayer2() {
 }
 
 function movePlayer() {
-    player1param.innerHTML = "movePlayer:" + player1X + " " + player1Y + " " + player1XDir + " " + player1YDir;
     player1X += player1XSpeed * player1XDir;
 
     player1YSpeed += GRAVITY;
+    if (player1YSpeed > TERMINAL_VELOCITY) player1YSpeed = TERMINAL_VELOCITY;
 
     player1Y = player1Y + player1YSpeed;
     if (player1X < 0) {
@@ -69,18 +72,21 @@ function movePlayer() {
         player1X = ARENA_WIDTH - PLAYER_WIDTH;
     }
     if (player1Y < 0) {
-        player1Y = 450;
+        player1Y = 0;
     } else if (player1Y > ARENA_HEIGHT - PLAYER_HEIGHT) {
         player1Y = ARENA_HEIGHT - PLAYER_HEIGHT;
     }
+    player1param.innerHTML = "movePlayer:" + player1X + " " + player1Y + " " + player1XDir + " " + player1YDir;
 
 }
 
 
 function movePlayer2() {
-    player2param.innerHTML = "movePlayer2:" + player2X + " " + player2Y + " " + player2XDir + " " + player2YDir;
     player2X += player2XSpeed * player2XDir;
+
     player2YSpeed += GRAVITY;
+    if (player2YSpeed > TERMINAL_VELOCITY) player2YSpeed = TERMINAL_VELOCITY;
+
     player2Y = player2Y + player2YSpeed;
     if (player2X < 0) {
         player2X = 0;
@@ -89,10 +95,11 @@ function movePlayer2() {
     }
 
     if (player2Y < 0) {
-        player2Y = 450;
+        player2Y = 0;
     } else if (player2Y > ARENA_HEIGHT - PLAYER_HEIGHT) {
         player2Y = ARENA_HEIGHT - PLAYER_HEIGHT;
     }
+    player2param.innerHTML = "movePlayer2:" + player2X + " " + player2Y + " " + player2XDir + " " + player2YDir;
 }
 
 
@@ -104,7 +111,7 @@ function keyPressed(event) {
 
     }
     if (key === PLAYER1_RIGHT) {
-        player1XDir = 1;
+        player1XDir = +1;
     }
     if (key === PLAYER1_DOWN) {
         //player1YDir = +1;
@@ -117,7 +124,7 @@ function keyPressed(event) {
 
     }
     if (key === PLAYER2_RIGHT) {
-        player2XDir = 1;
+        player2XDir = +1;
     }
     if (key === PLAYER2_DOWN) {
         //player2YDir = +1;
@@ -161,17 +168,20 @@ function keyReleased(event) {
 }
 
 function checkImpact() {
+    impactOutput.innerHTML = "Player1X " + player1X + " Player2X " + player2X + " player1Y " + player1Y + "player2Y " + player2Y;
     if ((player2X < player1X + PLAYER_WIDTH) &&
         (player2X + PLAYER_WIDTH > player1X) &&
         (player2Y < player1Y + PLAYER_HEIGHT) &&
         (player2Y + PLAYER_HEIGHT > player1Y)) {
-        if (player1Y < player2Y) {
+        if (player1Y > player2Y) {
 
             updatelives(1);
 
-        } else {
+        } else if (player1Y < player2Y) {
 
             updatelives(2);
+        } else {
+            updatelives(Math.floor(Math.random() * 2) + 1)
         }
     }
 
@@ -180,36 +190,38 @@ function checkImpact() {
 
 function updatelives(playerhit) {
 
+    let rightSideHit = player1X > ARENA_WIDTH / 2;
     if (playerhit == 1) {
-        alert("Player 1 has been hit");
+        // alert("Player 1 has been hit");
         player1Lives = player1Lives - 1;
         let health1meter = document.getElementById("health1Meter");
         health1meter.value = player1Lives;
-
-
+        player1X = rightSideHit ? 100 : 400;
+        player1Y = ARENA_HEIGHT - 100;
+        player1XDir = 0;
+        player1YDir = 0;
     }
     if (playerhit == 2) {
-        alert("Player 2 has been hit");
+        //alert("Player 2 has been hit");
         player2Lives = player2Lives - 1;
         let health2meter = document.getElementById("health2Meter");
         health2meter.value = player2Lives;
+        player2X = rightSideHit ? 100 : 400;
+        player2Y = ARENA_HEIGHT - 100;
+
+        player2XDir = 0;
+        player2YDir = 0;
+
     }
-    player1X = 400;
-    player1Y = 500;
-    player2X = 100;
-    player2Y = 500;
-    player1XDir = 0;
-    player1YDir = 0;
-    player2XDir = 0;
-    player2YDir = 0;
+
 
 
     if (player1Lives == 0) {
-        endGame(1);
+        endGame(2);
 
     }
     if (player2Lives == 0) {
-        endGame(2);
+        endGame(1);
 
     }
 
@@ -218,7 +230,7 @@ function updatelives(playerhit) {
 
 function endGame(losingplayer) {
 
-    alert("Player " + losingplayer + " has won");
+    //alert("Player " + losingplayer + " has won");
 
     player1Lives = 5;
     player2Lives = 5;
@@ -227,7 +239,7 @@ function endGame(losingplayer) {
     health2meter = document.getElementById("health2Meter");
     health2meter.value = player2Lives;
 
-    alert("Restarting Game")
+    //alert("Restarting Game")
 
 
 }
@@ -240,14 +252,27 @@ function gravity() {
 function refreshUI() {
     ctx.clearRect(0, 0, 500, 500);
 
-
-
+    // drawPlayer1();
+    // checkImpact();
+    // drawPlayer2();
+    // checkImpact();
+    // movePlayer();
+    // checkImpact();
+    // movePlayer2();
+    // checkImpact();
     movePlayer();
     movePlayer2();
-
+    checkImpact();
     drawPlayer1();
     drawPlayer2();
-    checkImpact();
+
+
+
+
+
+
+
+
 
 
 
