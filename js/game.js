@@ -230,7 +230,7 @@ function updatelives(playerhit) {
 
 function endGame(losingplayer) {
 
-    //alert("Player " + losingplayer + " has won");
+    alert("Player " + losingplayer + " has won");
 
     player1Lives = 5;
     player2Lives = 5;
@@ -239,7 +239,7 @@ function endGame(losingplayer) {
     health2meter = document.getElementById("health2Meter");
     health2meter.value = player2Lives;
 
-    //alert("Restarting Game")
+    alert("Restarting Game")
 
 
 }
